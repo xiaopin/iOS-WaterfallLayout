@@ -6,6 +6,8 @@
 [![License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat)]()
 
 
+使用 UICollectionView + UICollectionViewLayout 实现瀑布流布局
+
 
 ## 特性
 

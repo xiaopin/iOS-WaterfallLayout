@@ -162,7 +162,7 @@
                                  CGRectGetMinY(itemAttribute.frame)+[_heightOfSections[section] floatValue]
                                  );
             attriture.frame = frame;
-            attriture.zIndex = NSIntegerMax;
+            attriture.zIndex = (NSIntegerMax/2)+section;
         }
     }
     

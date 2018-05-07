@@ -56,10 +56,10 @@
         CGFloat headerHeight = 0.0;
         if ([self.dataSource respondsToSelector:@selector(collectionView:layout:referenceHeightForHeaderInSection:)]) {
             headerHeight = [self.dataSource collectionView:collectionView layout:self referenceHeightForHeaderInSection:section];
+            UICollectionViewLayoutAttributes *headerLayoutAttribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+            headerLayoutAttribute.frame = CGRectMake(0.0, _contentHeight, contentWidth, headerHeight);
+            [_headerLayoutAttributes addObject:headerLayoutAttribute];
         }
-        UICollectionViewLayoutAttributes *headerLayoutAttribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-        headerLayoutAttribute.frame = CGRectMake(0.0, _contentHeight, contentWidth, headerHeight);
-        [_headerLayoutAttributes addObject:headerLayoutAttribute];
         
         // The current section's offset for per column.
         CGFloat offsetOfColumns[columnOfSection];
@@ -104,10 +104,10 @@
         CGFloat footerHeader = 0.0;
         if ([self.dataSource respondsToSelector:@selector(collectionView:layout:referenceHeightForFooterInSection:)]) {
             footerHeader = [self.dataSource collectionView:collectionView layout:self referenceHeightForFooterInSection:section];
+            UICollectionViewLayoutAttributes *footerLayoutAttribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
+            footerLayoutAttribute.frame = CGRectMake(0.0, _contentHeight+maxOffsetValue, contentWidth, headerHeight);
+            [_footerLayoutAttributes addObject:footerLayoutAttribute];
         }
-        UICollectionViewLayoutAttributes *footerLayoutAttribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter withIndexPath:[NSIndexPath indexPathForItem:0 inSection:section]];
-        footerLayoutAttribute.frame = CGRectMake(0.0, _contentHeight+maxOffsetValue, contentWidth, headerHeight);
-        [_footerLayoutAttributes addObject:footerLayoutAttribute];
         
         /**
          Update UICollectionView content height.
@@ -175,10 +175,18 @@
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForSupplementaryViewOfKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath {
     if ([elementKind isEqualToString:UICollectionElementKindSectionHeader]) {
-        return _headerLayoutAttributes[indexPath.item];
+        for (UICollectionViewLayoutAttributes *attributes in _headerLayoutAttributes) {
+            if (attributes.indexPath.section == indexPath.section) {
+                return attributes;
+            }
+        }
     }
     if ([elementKind isEqualToString:UICollectionElementKindSectionFooter]) {
-        return _footerLayoutAttributes[indexPath.item];
+        for (UICollectionViewLayoutAttributes *attributes in _footerLayoutAttributes) {
+            if (attributes.indexPath.section == indexPath.section) {
+                return attributes;
+            }
+        }
     }
     return nil;
 }

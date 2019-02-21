@@ -155,6 +155,7 @@
             UIEdgeInsets contentInsetOfSection = [self contentInsetForSection:section];
             NSIndexPath *firstIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
             UICollectionViewLayoutAttributes *itemAttribute = [self layoutAttributesForItemAtIndexPath:firstIndexPath];
+            if (!itemAttribute) continue;
             CGFloat headerHeight = CGRectGetHeight(attriture.frame);
             CGRect frame = attriture.frame;
             frame.origin.y = MIN(
@@ -170,6 +171,9 @@
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (_itemLayoutAttributes.count <= indexPath.section || _itemLayoutAttributes[indexPath.section].count <= indexPath.item) {
+        return nil;
+    }
     return _itemLayoutAttributes[indexPath.section][indexPath.item];
 }
 
@@ -192,7 +196,11 @@
 }
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
-    return YES;
+    if (_sectionHeadersPinToVisibleBounds) {
+        // 头部悬浮功能需要在滚动时实时计算布局(调用layoutAttributesForElementsInRect:方法)
+        return YES;
+    }
+    return [super shouldInvalidateLayoutForBoundsChange:newBounds];
 }
 
 #pragma mark Private
